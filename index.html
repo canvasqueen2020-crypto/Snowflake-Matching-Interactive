@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Snowflake Feelings Match</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind for layout + styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom styles -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-100 via-white to-purple-100">
+  <main class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <div class="flex flex-wrap items-center justify-center gap-4 mb-4">
+        <h1 id="game-title" class="text-3xl sm:text-4xl font-bold text-blue-800">
+          ❄️ Snowflake Feelings Match 🧤
+        </h1>
+        <button
+          id="title-speak"
+          class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"
+          aria-label="Hear game title">
+          🔊
+        </button>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <p id="instructions" class="text-lg sm:text-xl text-gray-700 max-w-2xl">
+          Drag each winter emoji to match with the feeling word! Listen to each word by clicking the speaker button.
+        </p>
+        <button
+          id="instructions-speak"
+          class="speak-button bg-green-500 hover:bg-green-600 text-white p-2 rounded-full"
+          aria-label="Hear instructions">
+          🔊
+        </button>
+      </div>
+    </header>
+
+    <!-- Game Area -->
+    <div class="grid lg:grid-cols-2 gap-8">
+      <!-- Draggable Emojis -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <h2 class="text-2xl font-bold text-blue-700">Winter Emojis</h2>
+          <button
+            class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm"
+            onclick="speak('Winter Emojis')"
+            aria-label="Hear Winter Emojis">
+            🔊
+          </button>
+        </div>
+        <div id="emoji-container" class="grid grid-cols-2 gap-4">
+          <div class="draggable bg-yellow-100 border-4 border-yellow-300 rounded-xl p-6 text-center"
+               draggable="true" data-emoji="☃️" data-feeling="happy">
+            <div class="text-6xl mb-2">☃️</div>
+            <button
+              class="speak-button bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-full text-sm"
+              onclick="speak('Snowman')">
+              🔊 Snowman
+            </button>
+          </div>
+
+          <div class="draggable bg-blue-100 border-4 border-blue-300 rounded-xl p-6 text-center"
+               draggable="true" data-emoji="❄️" data-feeling="calm">
+            <div class="text-6xl mb-2">❄️</div>
+            <button
+              class="speak-button bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
+              onclick="speak('Snowflake')">
+              🔊 Snowflake
+            </button>
+          </div>
+
+          <div class="draggable bg-purple-100 border-4 border-purple-300 rounded-xl p-6 text-center"
+               draggable="true" data-emoji="🥶" data-feeling="worried">
+            <div class="text-6xl mb-2">🥶</div>
+            <button
+              class="speak-button bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-full text-sm"
+              onclick="speak('Cold Face')">
+              🔊 Cold Face
+            </button>
+          </div>
+
+          <div class="draggable bg-gray-100 border-4 border-gray-300 rounded-xl p-6 text-center"
+               draggable="true" data-emoji="🌨️" data-feeling="sad">
+            <div class="text-6xl mb-2">🌨️</div>
+            <button
+              class="speak-button bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-full text-sm"
+              onclick="speak('Snow Cloud')">
+              🔊 Snow Cloud
+            </button>
+          </div>
+
+          <div class="draggable bg-orange-100 border-4 border-orange-300 rounded-xl p-6 text-center col-span-2"
+               draggable="true" data-emoji="🎿" data-feeling="excited">
+            <div class="text-6xl mb-2">🎿</div>
+            <button
+              class="speak-button bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full text-sm"
+              onclick="speak('Skis')">
+              🔊 Skis
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drop Zones -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <h2 class="text-2xl font-bold text-green-700">Feeling Words</h2>
+          <button
+            class="speak-button bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm"
+            onclick="speak('Feeling Words')"
+            aria-label="Hear Feeling Words">
+            🔊
+          </button>
+        </div>
+        <div class="space-y-4">
+          <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center"
+               data-feeling="happy">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold text-yellow-600">😊 Happy</span>
+              <button
+                class="speak-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full text-sm"
+                onclick="speak('Happy')">
+                🔊
+              </button>
+            </div>
+            <div class="emoji-slot mt-2"></div>
+          </div>
+
+          <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center"
+               data-feeling="calm">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold text-blue-600">😌 Calm</span>
+              <button
+                class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm"
+                onclick="speak('Calm')">
+                🔊
+              </button>
+            </div>
+            <div class="emoji-slot mt-2"></div>
+          </div>
+
+          <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center"
+               data-feeling="worried">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold text-purple-600">😰 Worried</span>
+              <button
+                class="speak-button bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full text-sm"
+                onclick="speak('Worried')">
+                🔊
+              </button>
+            </div>
+            <div class="emoji-slot mt-2"></div>
+          </div>
+
+          <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center"
+               data-feeling="sad">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold text-gray-600">😢 Sad</span>
+              <button
+                class="speak-button bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm"
+                onclick="speak('Sad')">
+                🔊
+              </button>
+            </div>
+            <div class="emoji-slot mt-2"></div>
+          </div>
+
+          <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center"
+               data-feeling="excited">
+            <div class="flex items-center gap-3">
+              <span class="text-2xl sm:text-3xl font-bold text-orange-600">🤩 Excited</span>
+              <button
+                class="speak-button bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full text-sm"
+                onclick="speak('Excited')">
+                🔊
+              </button>
+            </div>
+            <div class="emoji-slot mt-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="success-message"
+         class="hidden text-center mt-8 bg-green-100 border-4 border-green-400 rounded-2xl p-6">
+      <div class="text-6xl mb-4">🎉</div>
+      <h3 id="success-text" class="text-2xl sm:text-3xl font-bold text-green-800 mb-4">
+        Great job! You matched all the feelings!
+      </h3>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <button id="success-speak"
+                class="speak-button bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full text-lg">
+          🔊 Hear Success Message
+        </button>
+        <button id="play-again"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold">
+          🔄 Play Again
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Game logic -->
+  <script src="script.js"></script>
+</body>
+</html>
