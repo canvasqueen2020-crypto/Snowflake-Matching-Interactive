@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snowflake Feelings Match</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        .draggable {
+            cursor: grab;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .draggable:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .draggable.dragging {
+            opacity: 0.7;
+            transform: rotate(5deg) scale(1.1);
+            z-index: 1000;
+        }
+        
+        .drop-zone {
+            transition: all 0.3s ease;
+            border: 3px dashed #cbd5e1;
+        }
+        
+        .drop-zone.drag-over {
+            border-color: #3b82f6;
+            background-color: #dbeafe;
+            transform: scale(1.02);
+        }
+        
+        .drop-zone.correct {
+            border-color: #10b981;
+            background-color: #d1fae5;
+            animation: success-pulse 0.6s ease;
+        }
+        
+        .drop-zone.incorrect {
+            border-color: #ef4444;
+            background-color: #fee2e2;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes success-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .celebration {
+            animation: bounce 0.8s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .speak-button {
+            transition: all 0.2s ease;
+        }
+        
+        .speak-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .speak-button:active {
+            transform: scale(0.95);
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full bg-gradient-to-br from-blue-100 via-white to-purple-100">
+  <main class="container mx-auto px-4 py-8 max-w-6xl"><!-- Header -->
+   <header class="text-center mb-8">
+    <div class="flex items-center justify-center gap-4 mb-4">
+     <h1 id="game-title" class="text-4xl font-bold text-blue-800">❄️ Snowflake Feelings Match 🧤</h1><button id="title-speak" class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full"> 🔊 </button>
+    </div>
+    <div class="flex items-center justify-center gap-4">
+     <p id="instructions" class="text-xl text-gray-700 max-w-2xl">Drag each winter emoji to match with the feeling word! Listen to each word by clicking the speaker button.</p><button id="instructions-speak" class="speak-button bg-green-500 hover:bg-green-600 text-white p-2 rounded-full"> 🔊 </button>
+    </div>
+   </header><!-- Game Area -->
+   <div class="grid lg:grid-cols-2 gap-8"><!-- Draggable Emojis -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+     <div class="flex items-center gap-3 mb-6">
+      <h2 class="text-2xl font-bold text-blue-700">Winter Emojis</h2><button class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm" onclick="speak('Winter Emojis')"> 🔊 </button>
+     </div>
+     <div id="emoji-container" class="grid grid-cols-2 gap-4">
+      <div class="draggable bg-yellow-100 border-4 border-yellow-300 rounded-xl p-6 text-center" draggable="true" data-emoji="☃️" data-feeling="happy">
+       <div class="text-6xl mb-2">
+        ☃️
+       </div><button class="speak-button bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded-full text-sm" onclick="speak('Snowman')"> 🔊 Snowman </button>
+      </div>
+      <div class="draggable bg-blue-100 border-4 border-blue-300 rounded-xl p-6 text-center" draggable="true" data-emoji="❄️" data-feeling="calm">
+       <div class="text-6xl mb-2">
+        ❄️
+       </div><button class="speak-button bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-sm" onclick="speak('Snowflake')"> 🔊 Snowflake </button>
+      </div>
+      <div class="draggable bg-purple-100 border-4 border-purple-300 rounded-xl p-6 text-center" draggable="true" data-emoji="🥶" data-feeling="worried">
+       <div class="text-6xl mb-2">
+        🥶
+       </div><button class="speak-button bg-purple-500 hover:bg-purple-600 text-white px-3 py-1 rounded-full text-sm" onclick="speak('Cold Face')"> 🔊 Cold Face </button>
+      </div>
+      <div class="draggable bg-gray-100 border-4 border-gray-300 rounded-xl p-6 text-center" draggable="true" data-emoji="🌨️" data-feeling="sad">
+       <div class="text-6xl mb-2">
+        🌨️
+       </div><button class="speak-button bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded-full text-sm" onclick="speak('Snow Cloud')"> 🔊 Snow Cloud </button>
+      </div>
+      <div class="draggable bg-orange-100 border-4 border-orange-300 rounded-xl p-6 text-center col-span-2" draggable="true" data-emoji="🎿" data-feeling="excited">
+       <div class="text-6xl mb-2">
+        🎿
+       </div><button class="speak-button bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded-full text-sm" onclick="speak('Skis')"> 🔊 Skis </button>
+      </div>
+     </div>
+    </div><!-- Drop Zones -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+     <div class="flex items-center gap-3 mb-6">
+      <h2 class="text-2xl font-bold text-green-700">Feeling Words</h2><button class="speak-button bg-green-500 hover:bg-green-600 text-white p-2 rounded-full text-sm" onclick="speak('Feeling Words')"> 🔊 </button>
+     </div>
+     <div class="space-y-4">
+      <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center" data-feeling="happy">
+       <div class="flex items-center gap-3"><span class="text-3xl font-bold text-yellow-600">😊 Happy</span> <button class="speak-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-full text-sm" onclick="speak('Happy')"> 🔊 </button>
+       </div>
+       <div class="emoji-slot mt-2"></div>
+      </div>
+      <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center" data-feeling="calm">
+       <div class="flex items-center gap-3"><span class="text-3xl font-bold text-blue-600">😌 Calm</span> <button class="speak-button bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full text-sm" onclick="speak('Calm')"> 🔊 </button>
+       </div>
+       <div class="emoji-slot mt-2"></div>
+      </div>
+      <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center" data-feeling="worried">
+       <div class="flex items-center gap-3"><span class="text-3xl font-bold text-purple-600">😰 Worried</span> <button class="speak-button bg-purple-500 hover:bg-purple-600 text-white p-2 rounded-full text-sm" onclick="speak('Worried')"> 🔊 </button>
+       </div>
+       <div class="emoji-slot mt-2"></div>
+      </div>
+      <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center" data-feeling="sad">
+       <div class="flex items-center gap-3"><span class="text-3xl font-bold text-gray-600">😢 Sad</span> <button class="speak-button bg-gray-500 hover:bg-gray-600 text-white p-2 rounded-full text-sm" onclick="speak('Sad')"> 🔊 </button>
+       </div>
+       <div class="emoji-slot mt-2"></div>
+      </div>
+      <div class="drop-zone rounded-xl p-6 text-center min-h-24 flex flex-col items-center justify-center" data-feeling="excited">
+       <div class="flex items-center gap-3"><span class="text-3xl font-bold text-orange-600">🤩 Excited</span> <button class="speak-button bg-orange-500 hover:bg-orange-600 text-white p-2 rounded-full text-sm" onclick="speak('Excited')"> 🔊 </button>
+       </div>
+       <div class="emoji-slot mt-2"></div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Success Message -->
+   <div id="success-message" class="hidden text-center mt-8 bg-green-100 border-4 border-green-400 rounded-2xl p-6">
+    <div class="text-6xl mb-4">
+     🎉
+    </div>
+    <h3 id="success-text" class="text-3xl font-bold text-green-800 mb-4">Great job! You matched all the feelings!</h3>
+    <div class="flex items-center justify-center gap-4"><button id="success-speak" class="speak-button bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full text-lg"> 🔊 Hear Success Message </button> <button id="play-again" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold"> 🔄 Play Again </button>
+    </div>
+   </div>
+  </main>
+  <script>
+        // Configuration object
+        const defaultConfig = {
+            game_title: "❄️ Snowflake Feelings Match 🧤",
+            instructions: "Drag each winter emoji to match with the feeling word! Listen to each word by clicking the speaker button.",
+            success_message: "Great job! You matched all the feelings!"
+        };
+
+        let config = { ...defaultConfig };
+        let correctMatches = 0;
+        let totalMatches = 5;
+
+        // Text-to-speech function
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.8;
+                utterance.pitch = 1.1;
+                utterance.volume = 1;
+                
+                // Try to use a child-friendly voice
+                const voices = speechSynthesis.getVoices();
+                const childVoice = voices.find(voice => 
+                    voice.name.includes('Google') || 
+                    voice.name.includes('Female') || 
+                    voice.lang.startsWith('en')
+                );
+                if (childVoice) {
+                    utterance.voice = childVoice;
+                }
+                
+                speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Initialize drag and drop
+        function initializeDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable');
+            const dropZones = document.querySelectorAll('.drop-zone');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', handleDragStart);
+                draggable.addEventListener('dragend', handleDragEnd);
+            });
+
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragenter', handleDragEnter);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.emoji);
+            e.dataTransfer.setData('feeling', this.dataset.feeling);
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDragEnter(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            const draggedEmoji = e.dataTransfer.getData('text/plain');
+            const draggedFeeling = e.dataTransfer.getData('feeling');
+            const targetFeeling = this.dataset.feeling;
+            
+            if (draggedFeeling === targetFeeling) {
+                // Correct match
+                this.classList.add('correct');
+                const emojiSlot = this.querySelector('.emoji-slot');
+                emojiSlot.innerHTML = `<div class="text-4xl celebration">${draggedEmoji}</div>`;
+                
+                // Remove the dragged item
+                const draggedElement = document.querySelector(`[data-emoji="${draggedEmoji}"]`);
+                draggedElement.style.display = 'none';
+                
+                correctMatches++;
+                
+                // Play success sound effect with speech
+                speak('Correct! Great match!');
+                
+                // Check if all matches are complete
+                if (correctMatches === totalMatches) {
+                    setTimeout(() => {
+                        showSuccessMessage();
+                    }, 1000);
+                }
+                
+                setTimeout(() => {
+                    this.classList.remove('correct');
+                }, 1000);
+            } else {
+                // Incorrect match
+                this.classList.add('incorrect');
+                speak('Try again! That doesn\'t match.');
+                
+                setTimeout(() => {
+                    this.classList.remove('incorrect');
+                }, 1000);
+            }
+        }
+
+        function showSuccessMessage() {
+            document.getElementById('success-message').classList.remove('hidden');
+            speak(config.success_message);
+            
+            // Add celebration animation to all matched emojis
+            document.querySelectorAll('.emoji-slot div').forEach(emoji => {
+                emoji.classList.add('celebration');
+            });
+        }
+
+        function resetGame() {
+            correctMatches = 0;
+            document.getElementById('success-message').classList.add('hidden');
+            
+            // Reset all draggable items
+            document.querySelectorAll('.draggable').forEach(item => {
+                item.style.display = 'block';
+            });
+            
+            // Clear all drop zones
+            document.querySelectorAll('.emoji-slot').forEach(slot => {
+                slot.innerHTML = '';
+            });
+            
+            // Remove all status classes
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.classList.remove('correct', 'incorrect', 'drag-over');
+            });
+        }
+
+        // Event listeners for speech buttons
+        document.getElementById('title-speak').addEventListener('click', () => {
+            speak(config.game_title.replace(/[❄️🧤]/g, ''));
+        });
+
+        document.getElementById('instructions-speak').addEventListener('click', () => {
+            speak(config.instructions);
+        });
+
+        document.getElementById('success-speak').addEventListener('click', () => {
+            speak(config.success_message);
+        });
+
+        document.getElementById('play-again').addEventListener('click', resetGame);
+
+        // Element SDK implementation
+        async function onConfigChange(newConfig) {
+            config = { ...config, ...newConfig };
+            
+            // Update UI elements
+            document.getElementById('game-title').textContent = config.game_title;
+            document.getElementById('instructions').textContent = config.instructions;
+            document.getElementById('success-text').textContent = config.success_message;
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ['game_title', config.game_title || defaultConfig.game_title],
+                ['instructions', config.instructions || defaultConfig.instructions],
+                ['success_message', config.success_message || defaultConfig.success_message]
+            ]);
+        }
+
+        // Initialize the game
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDragAndDrop();
+            
+            // Load voices for speech synthesis
+            if ('speechSynthesis' in window) {
+                speechSynthesis.getVoices();
+                speechSynthesis.addEventListener('voiceschanged', () => {
+                    speechSynthesis.getVoices();
+                });
+            }
+            
+            // Welcome message
+            setTimeout(() => {
+                speak('Welcome to Snowflake Feelings Match! Drag each winter emoji to match with the feeling word.');
+            }, 1000);
+        });
+
+        // Initialize Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99f2d719f111cfb0',t:'MTc2MzI1MjYxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
